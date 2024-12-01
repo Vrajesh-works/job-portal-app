@@ -1,39 +1,51 @@
-import { verifyToken } from '../config/jwt.js';
-import User from '../models/userModel.js';
+// backend/middleware/authMiddleware.js
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-export const protect = async (req, res, next) => {
-  let token;
+const authMiddleware = async (req, res, next) => {
+  try {
+    // Get token from header
+    const token = req.header('Authorization')?.replace('Bearer ', '');
 
-  // Check if token exists in headers
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    try {
-      // Get token from header
-      token = req.headers.authorization.split(' ')[1];
-
-      // Verify token
-      const decoded = verifyToken(token);
-
-      // Get user from the token
-      req.user = await User.findById(decoded.id).select('-password');
-
-      next();
-    } catch (error) {
-      res.status(401).json({ message: 'Not authorized' });
+    if (!token) {
+      return res.status(401).json({ message: 'No token, authorization denied' });
     }
-  }
 
-  if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Find user by ID from token
+    const user = await User.findById(decoded.userId).select('-password');
+
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    // Attach user to request object
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Token is not valid' });
   }
 };
 
-export const adminOnly = (req, res, next) => {
-  if (req.user && req.user.type === 'admin') {
-    next();
-  } else {
-    res.status(403).json({ message: 'Access denied. Admin only.' });
+// Middleware to check user type
+const adminMiddleware = (req, res, next) => {
+  if (req.user.type !== 'admin') {
+    return res.status(403).json({ message: 'Access denied. Admin rights required.' });
   }
+  next();
+};
+
+const employeeMiddleware = (req, res, next) => {
+  if (req.user.type !== 'employee') {
+    return res.status(403).json({ message: 'Access denied. Employee rights required.' });
+  }
+  next();
+};
+
+module.exports = {
+  authMiddleware,
+  adminMiddleware,
+  employeeMiddleware
 };
