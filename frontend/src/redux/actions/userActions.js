@@ -4,7 +4,7 @@ import {
   USER_LOADING, 
   USER_LOADED, 
   USER_ERROR 
-} from './types';
+} from '../types';
 
 // Fetch All Users Action
 export const fetchUsers = () => async (dispatch) => {

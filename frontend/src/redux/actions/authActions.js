@@ -4,7 +4,7 @@ import {
   AUTH_SUCCESS, 
   AUTH_FAIL, 
   LOGOUT 
-} from '../actions/types';
+} from '../types';
 
 const API_URL = 'http://localhost:5000/api';
 
