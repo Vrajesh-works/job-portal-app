@@ -1,12 +1,11 @@
-// backend/controllers/userController.js
-const User = require('../models/User');
+import User from '../models/userModel.js';
 
-// Get All Users (excluding passwords)
-exports.getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select('-password');
+    // Fetch all users, excluding password field
+    const users = await User.find({}).select('-password');
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching users', error: error.message });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

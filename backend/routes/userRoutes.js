@@ -1,9 +1,10 @@
-// backend/routes/userRoutes.js
-const express = require('express');
+import express from 'express';
+import { getAllUsers } from '../controllers/userController.js';
+import { protect, adminOnly } from '../middlewares/authMiddleware.js';
+
 const router = express.Router();
-const { getAllUsers } = require('../controllers/userController');
-const { authMiddleware, adminMiddleware } = require('../middleware/authMiddleware');
 
-router.get('/all', [authMiddleware, adminMiddleware], getAllUsers);
+// Get all users (admin only)
+router.get('/', protect, adminOnly, getAllUsers);
 
-module.exports = router;
+export default router;

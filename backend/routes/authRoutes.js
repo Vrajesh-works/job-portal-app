@@ -1,8 +1,13 @@
-const express = require('express');
+import express from 'express';
+import { register, login } from '../controllers/authController.js';
+import { validateRegistration, validateLogin } from '../validations/userValidation.js';
+
 const router = express.Router();
-const { register, login } = require('../controllers/authController');
 
-router.post('/register', register);
-router.post('/login', login);
+// User registration
+router.post('/register', validateRegistration, register);
 
-module.exports = router;
+// User login
+router.post('/login', validateLogin, login);
+
+export default router;
