@@ -1,0 +1,80 @@
+// src/components/auth/Login.js
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { login } from '../../redux/actions/authActions';
+import { 
+  Container, 
+  TextField, 
+  Button, 
+  Typography, 
+  Box, 
+  Paper 
+} from '@mui/material';
+
+const Login = ({ history }) => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await dispatch(login(formData.email, formData.password));
+      history.push('/dashboard');
+    } catch (error) {
+      console.error('Login failed', error);
+    }
+  };
+
+  return (
+    <Container maxWidth="xs">
+      <Paper elevation={3} sx={{ padding: 3, marginTop: 8 }}>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            label="Email Address"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign In
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
+  );
+};
+
+export default Login;
