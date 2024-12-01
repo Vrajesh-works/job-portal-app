@@ -1,24 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './redux/store';
+
+// Import Components
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import PrivateRoute from './components/common/PrivateRoute';
+import Navbar from './components/common/Navbar';
+
+// Admin Components
+import EmployeeList from './components/admin/EmployeeList';
+import AddJob from './components/admin/AddJob';
+
+// Employee Components
+import JobList from './components/employee/JobList';
+
+// Dashboard or Home
+import Dashboard from './components/common/Dashboard';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <Switch>
+            {/* Public Routes */}
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+
+            {/* Protected Routes */}
+            <PrivateRoute exact path="/" component={Dashboard} />
+            
+            {/* Admin Routes */}
+            <PrivateRoute 
+              exact 
+              path="/employees" 
+              component={EmployeeList} 
+              allowedRoles={['admin']} 
+            />
+            <PrivateRoute 
+              exact 
+              path="/add-job" 
+              component={AddJob} 
+              allowedRoles={['admin']} 
+            />
+
+            {/* Employee Routes */}
+            <PrivateRoute 
+              exact 
+              path="/jobs" 
+              component={JobList} 
+              allowedRoles={['employee']} 
+            />
+          </Switch>
+        </div>
+      </Router>
+    </Provider>
   );
 }
 
