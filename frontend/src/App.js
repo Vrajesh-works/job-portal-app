@@ -1,64 +1,275 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import store from './redux/store';
+/*import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from './store/slices/authSlice';
+import { AppBar, Toolbar, Button } from '@mui/material';
 
-// Import Components
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import PrivateRoute from './components/common/PrivateRoute';
-import Navbar from './components/common/Navbar';
+import Login from './components/Login';
+import Employees from './components/Employees';
+import AddJobs from './components/AddJobs';
+import Jobs from './components/Jobs';
 
-// Admin Components
-import EmployeeList from './components/admin/EmployeeList';
-import AddJob from './components/admin/AddJob';
+function ProtectedRoute({ children, allowedRoles }) {
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
 
-// Employee Components
-import JobList from './components/employee/JobList';
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
-// Dashboard or Home
-import Dashboard from './components/common/Dashboard';
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+}
 
 function App() {
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout()); 
+    localStorage.removeItem('authToken'); 
+    localStorage.removeItem('role');
+    window.location.href = '/login'; 
+  };
+
   return (
-    <Provider store={store}>
-      <Router>
-        <div className="App">
-          <Navbar />
-          <Switch>
-            {/* Public Routes */}
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
+    <Router>
+      <AppBar position="static">
+        <Toolbar>
+          {}
+          {isAuthenticated && (
+            <Button color="inherit" onClick={handleLogout}>
+              Logout
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
 
-            {/* Protected Routes */}
-            <PrivateRoute exact path="/" component={Dashboard} />
-            
-            {/* Admin Routes */}
-            <PrivateRoute 
-              exact 
-              path="/employees" 
-              component={EmployeeList} 
-              allowedRoles={['admin']} 
-            />
-            <PrivateRoute 
-              exact 
-              path="/add-job" 
-              component={AddJob} 
-              allowedRoles={['admin']} 
-            />
+      <Routes>
+        {}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              role === 'admin' ? (
+                <Navigate to="/employees" />
+              ) : role === 'employee' ? (
+                <Navigate to="/jobs" />
+              ) : (
+                <Navigate to="/login" />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
 
-            {/* Employee Routes */}
-            <PrivateRoute 
-              exact 
-              path="/jobs" 
-              component={JobList} 
-              allowedRoles={['employee']} 
-            />
-          </Switch>
-        </div>
-      </Router>
-    </Provider>
+        {}
+        <Route path="/login" element={<Login />} />
+
+        {}
+        <Route
+          path="/employees"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Employees />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-jobs"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AddJobs />
+            </ProtectedRoute>
+          }
+        />
+
+        {}
+        <Route
+          path="/jobs"
+          element={
+            <ProtectedRoute allowedRoles={['employee']}>
+              <Jobs />
+            </ProtectedRoute>
+          }
+        />
+
+        {}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;*/
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from './store/slices/authSlice';
+import { AppBar, Toolbar, Button } from '@mui/material';
+
+import Login from './components/Login';
+import Employees from './components/Employees';
+import AddJobs from './components/AddJobs';
+import Jobs from './components/Jobs';
+import About from './components/About';
+import Contact from './components/Contact';
+import CompanyShowcase from './components/CompanyShowcase';
+
+function ProtectedRoute({ children, allowedRoles }) {
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+}
+
+function App() {
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout()); // Clear Redux state
+    localStorage.removeItem('authToken'); // Clear localStorage
+    localStorage.removeItem('role');
+    window.location.href = '/login'; // Redirect to login page
+  };
+
+  return (
+    <Router>
+      <AppBar position="static">
+        <Toolbar>
+          {/* Navbar Links */}
+          {isAuthenticated && (
+            <>
+              <Button color="inherit" component={Link} to="/about">
+                About Us
+              </Button>
+              <Button color="inherit" component={Link} to="/contact">
+                Contact Us
+              </Button>
+              <Button color="inherit" component={Link} to="/company-showcase">
+                Company Showcase
+              </Button>
+
+              {/* Admin-Specific Buttons */}
+              {role === 'admin' && (
+                <>
+                  <Button color="inherit" component={Link} to="/employees">
+                    Employees
+                  </Button>
+                  <Button color="inherit" component={Link} to="/add-jobs">
+                    Add Jobs
+                  </Button>
+                </>
+              )}
+
+              {/* Employee-Specific Buttons */}
+              {role === 'employee' && (
+                <Button color="inherit" component={Link} to="/jobs">
+                  Jobs
+                </Button>
+              )}
+
+              {/* Logout Button */}
+              <Button color="inherit" onClick={handleLogout}>
+                Logout
+              </Button>
+            </>
+          )}
+        </Toolbar>
+      </AppBar>
+
+      <Routes>
+        {/* Default Route */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              role === 'admin' ? (
+                <Navigate to="/employees" />
+              ) : role === 'employee' ? (
+                <Navigate to="/jobs" />
+              ) : (
+                <Navigate to="/login" />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+        {/* Public Route */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Admin Routes */}
+        <Route
+          path="/employees"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Employees />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-jobs"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AddJobs />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Shared Routes for Both Roles */}
+        <Route
+          path="/jobs"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'employee']}>
+              <Jobs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'employee']}>
+              <About />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'employee']}>
+              <Contact />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/company-showcase"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'employee']}>
+              <CompanyShowcase />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch-All */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
+
