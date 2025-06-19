@@ -1,70 +1,66 @@
-# Getting Started with Create React App
+# Job Portal Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the frontend part of the Job Portal application, built with React, Redux, and Material UI.
+
+## Features
+
+- **User Authentication**: Login functionality with role-based access
+- **Admin Dashboard**: User management and job posting capabilities
+- **Employee Portal**: Job listing and browsing functionality
+- **Responsive Design**: Built with Material UI for a modern, responsive interface
+- **State Management**: Redux for efficient state management across the application
+
+## Project Structure
+
+```
+src/
+├── api.js                # API integration layer
+├── App.js                # Main component and routing logic
+├── components/           # UI components
+│   ├── About.js          # About page
+│   ├── AddJobs.js        # Job creation form for admins
+│   ├── CompanyShowcase.js # Featured companies display
+│   ├── Contact.js        # Contact information page
+│   ├── Employees.js      # Employee management for admins
+│   ├── Home.js           # Landing page
+│   ├── JobListing.js     # Individual job listing component
+│   ├── Jobs.js           # Job listings page
+│   ├── Login.js          # Authentication component
+│   ├── LogoutButton.js   # Logout functionality
+│   └── ProtectedRoute.js # Route protection logic
+├── store/                # Redux store setup
+│   ├── slices/           
+│   │   └── authSlice.js  # Authentication state management
+│   └── store.js          # Redux store configuration
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
-
 ### `npm start`
 
-Runs the app in the development mode.\
+Runs the app in development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode.
 
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The build is optimized for performance with minified files and hashed filenames.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Integration with Backend
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This frontend connects to a Node.js/Express backend running at `http://localhost:4000`. The API integration is handled in the `api.js` file, which provides methods for authentication, user management, and job operations.
 
-### `npm run eject`
+## Authentication Flow
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. User logs in through the Login component
+2. Authentication state is stored in Redux and localStorage
+3. Protected routes check authentication status before rendering
+4. Different views are shown based on user role (admin/employee)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## UI Framework
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+The application uses Material UI components for a consistent, modern design that's responsive across different device sizes.
